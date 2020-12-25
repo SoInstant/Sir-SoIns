@@ -12,6 +12,7 @@ flask = "^1.1.2"
 pymongo = "^3.11.2"
 dnspython = "^2.0.0"
 discord-timers = "^0.1.0"
+discord-pretty-help = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 

@@ -1,0 +1,6 @@
+discord
+discord-timers
+python-dotenv
+pymongo
+dnspython
+flask

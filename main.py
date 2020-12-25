@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-from time import sleep
 
 from discord.ext import commands, timers
 import discord
@@ -14,7 +13,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 
-bot = commands.Bot(command_prefix="!")
+bot = commands.Bot(command_prefix="!", help_command=None)
 bot.timer_manager = timers.TimerManager(bot)
 
 
@@ -33,7 +32,7 @@ async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     await bot.change_presence(
         activity=discord.Activity(
-            type=discord.ActivityType.watching, name="over reminders"
+            type=discord.ActivityType.watching, name="over SoInstant"
         )
     )
     await bot.get_channel(CHANNEL_ID).send(content=f"<@{OWNER_ID}> Bot is now online!")
@@ -55,9 +54,13 @@ async def on_reminder(task, time):
 
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.errors.CommandNotFound):
+    if isinstance(error, commands.CommandNotFound):
         await ctx.channel.send(
             content=":negative_squared_cross_mark: No such command exists!"
+        )
+    elif isinstance(error, commands.MissingRequiredArgument):
+        await ctx.channel.send(
+            content=":negative_squared_cross_mark: Missing parameters!"
         )
 
 
@@ -76,21 +79,45 @@ async def clearmsg(ctx, n=None):
             content=f":white_check_mark: {counter} messages have been deleted!"
         )
 
+@bot.command(name="help", help="Shows this message.")
+async def help(ctx, *args):
+    commands = dict([(command.name, command) for command in bot.commands])
+    if args == []:
+        print(1)
 
-@bot.group(name="reminders", invoke_without_command=True)
+# @bot.command(name="watch")
+# async def watch(ctx):
+#     await bot.change_presence(
+#         activity=discord.Activity(
+#             type=discord.ActivityType.watching,
+#             name=f"over #{ctx.channel}"
+#         )
+#     )
+#     await ctx.channel.send(content="This channel is now under watch by the moderators.")
+
+
+@bot.group(
+    name="reminders",
+    aliases=["r"],
+    invoke_without_command=True,
+    help="Base command for reminders",
+    description="Base command for reminders.",
+)
 async def reminders(ctx):
     await ctx.channel.send(
-        content="Base reminders command. Subcommands: list, add, delete"
+        content=":negative_squared_cross_mark: Invalid/missing subcommand!"
     )
 
 
-@reminders.command(name="list", help="Lists all pending tasks.")
+@reminders.command(name="list", aliases=["l"], help="Lists all pending tasks.")
 async def list_reminders(ctx):
     reminders = utils.get_reminders()
     if reminders == []:
         await ctx.channel.send(content="You have no current tasks to complete! :tada:")
     else:
-        embed = discord.Embed(title="__Here are your pending tasks:__")
+        embed = discord.Embed(
+            title="__Here are your pending tasks:__", color=discord.Color(0xB7CAE2)
+        )
         embed.set_author(
             name="Sir SoInstant",
             url="https://soinstant.ml",
@@ -122,6 +149,7 @@ async def add_reminder(ctx, task: str, due: str, warn: str, desc: str):
 
 @reminders.command(
     name="delete",
+    aliases=["del", "d"],
     help="Deletes a task. The argument, n, is the index of the task from !reminders list",
 )
 async def delete_reminder(ctx, n: int):
@@ -147,4 +175,6 @@ async def clear(ctx):
 
 if __name__ == "__main__":
     keep_alive.keep_alive()
+    print([command for command in bot.commands])
     bot.run(TOKEN)
+    # dont put anything here
