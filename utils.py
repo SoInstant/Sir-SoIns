@@ -14,7 +14,6 @@ client = pymongo.MongoClient(
 
 db = client["app"]
 
-
 def get_reminders():
     """Returns a list of pending tasks
 

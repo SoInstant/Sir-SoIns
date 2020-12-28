@@ -12,6 +12,8 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+NAME_URL = "https://soinstant.ml"
+ICON_URL = "https://i.pinimg.com/originals/7d/41/f4/7d41f4a15bd89da6a65856e69cc6e2cc.png"
 
 bot = commands.Bot(command_prefix="!", help_command=None)
 bot.timer_manager = timers.TimerManager(bot)
@@ -30,11 +32,7 @@ async def block_all(ctx):
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
-    await bot.change_presence(
-        activity=discord.Activity(
-            type=discord.ActivityType.watching, name="over SoInstant"
-        )
-    )
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over SoInstant"))
     await bot.get_channel(CHANNEL_ID).send(content=f"<@{OWNER_ID}> Bot is now online!")
     tasks = utils.get_reminders()
     for task in tasks:
@@ -47,21 +45,15 @@ async def on_ready():
 
 @bot.event
 async def on_reminder(task, time):
-    await bot.get_channel(CHANNEL_ID).send(
-        f'<@{OWNER_ID}> The task "{task}" is due at {time}!'
-    )
+    await bot.get_channel(CHANNEL_ID).send(f'<@{OWNER_ID}> The task "{task}" is due at {time}!')
 
 
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.channel.send(
-            content=":negative_squared_cross_mark: No such command exists!"
-        )
+        await ctx.channel.send(content=":negative_squared_cross_mark: No such command exists!")
     elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.channel.send(
-            content=":negative_squared_cross_mark: Missing parameters!"
-        )
+        await ctx.channel.send(content=":negative_squared_cross_mark: Missing parameters!")
 
 
 @bot.command(help="Clears n messages from the channel.")
@@ -75,25 +67,43 @@ async def clearmsg(ctx, n=None):
     if counter == 1:
         await ctx.channel.send(content=":white_check_mark: 1 message has been deleted!")
     else:
-        await ctx.channel.send(
-            content=f":white_check_mark: {counter} messages have been deleted!"
-        )
+        await ctx.channel.send(content=f":white_check_mark: {counter} messages have been deleted!")
+
 
 @bot.command(name="help", help="Shows this message.")
 async def help(ctx, *args):
-    commands = dict([(command.name, command) for command in bot.commands])
-    if args == []:
-        print(1)
+    current_level = dict([(_command.name, {"_help": _command.help, "_command": _command}) for _command in bot.commands])
+    for arg in args:
+        try:
+            _command = current_level[arg]["_command"]
+            if isinstance(_command, commands.Group):
+                current_level = dict(
+                    [
+                        (
+                            subcommand.name,
+                            {"_help": subcommand.help, "_command": subcommand},
+                        )
+                        for subcommand in _command.commands
+                    ]
+                )
+            else:
+                current_level = dict([(_command.name, {"_help": _command.help, "_command": _command})])
+        except KeyError:
+            await ctx.channel.send(content=f":negative_squared_cross_mark: No such command exists!")
 
-# @bot.command(name="watch")
-# async def watch(ctx):
-#     await bot.change_presence(
-#         activity=discord.Activity(
-#             type=discord.ActivityType.watching,
-#             name=f"over #{ctx.channel}"
-#         )
-#     )
-#     await ctx.channel.send(content="This channel is now under watch by the moderators.")
+    if not args:
+        embed = discord.Embed(title="Bot commands", color=0xB7CAE2)
+    else:
+        embed = discord.Embed(title="!" + " ".join(args), description=_command.help, color=0xB7CAE2)
+
+    embed.set_author(name="Sir SoInstant", url=NAME_URL, icon_url=ICON_URL)
+
+    if args == () or isinstance(_command, commands.Group):
+        for key in sorted(current_level):
+            embed.add_field(name=key, value=f"```{current_level[key]['_help']}```", inline=False)
+    embed.set_footer(text="Type !help command for more info on a command.")
+
+    await ctx.channel.send(embed=embed)
 
 
 @bot.group(
@@ -101,12 +111,9 @@ async def help(ctx, *args):
     aliases=["r"],
     invoke_without_command=True,
     help="Base command for reminders",
-    description="Base command for reminders.",
 )
 async def reminders(ctx):
-    await ctx.channel.send(
-        content=":negative_squared_cross_mark: Invalid/missing subcommand!"
-    )
+    await ctx.channel.send(content=":negative_squared_cross_mark: Invalid/missing subcommand!")
 
 
 @reminders.command(name="list", aliases=["l"], help="Lists all pending tasks.")
@@ -115,13 +122,11 @@ async def list_reminders(ctx):
     if reminders == []:
         await ctx.channel.send(content="You have no current tasks to complete! :tada:")
     else:
-        embed = discord.Embed(
-            title="__Here are your pending tasks:__", color=discord.Color(0xB7CAE2)
-        )
+        embed = discord.Embed(title="__Here are your pending tasks:__", color=discord.Color(0xB7CAE2))
         embed.set_author(
             name="Sir SoInstant",
-            url="https://soinstant.ml",
-            icon_url="https://i.pinimg.com/originals/7d/41/f4/7d41f4a15bd89da6a65856e69cc6e2cc.png",
+            url=NAME_URL,
+            icon_url=ICON_URL,
         )
         for i, document in enumerate(reminders):
             embed.add_field(
@@ -154,27 +159,20 @@ async def add_reminder(ctx, task: str, due: str, warn: str, desc: str):
 )
 async def delete_reminder(ctx, n: int):
     if utils.delete_reminder(n):
-        await ctx.channel.send(
-            content=f":white_check_mark: Reminder no. {n} has been deleted!"
-        )
+        await ctx.channel.send(content=f":white_check_mark: Reminder no. {n} has been deleted!")
     else:
-        await ctx.channel.send(
-            content=f":negative_squared_cross_mark: Index out of bounds!"
-        )
+        await ctx.channel.send(content=f":negative_squared_cross_mark: Index out of bounds!")
 
 
 @reminders.command(name="cleardone", help="Clears all completed tasks from the DB.")
 async def clear(ctx):
     if utils.clear_finished():
-        await ctx.channel.send(
-            content=":white_check_mark: Successfully cleared completed tasks!"
-        )
+        await ctx.channel.send(content=":white_check_mark: Successfully cleared completed tasks!")
     else:
         await ctx.channel.send(content="Something went wrong!")
 
 
 if __name__ == "__main__":
     keep_alive.keep_alive()
-    print([command for command in bot.commands])
     bot.run(TOKEN)
-    # dont put anything here
+    # dont put anything here, it won't be executed
