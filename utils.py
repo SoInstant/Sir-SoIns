@@ -14,6 +14,7 @@ client = pymongo.MongoClient(
 
 db = client["app"]
 
+
 def get_reminders():
     """Returns a list of pending tasks
 
@@ -24,12 +25,7 @@ def get_reminders():
         A list of documents containing information about the tasks
     """
     col = db["reminders"]
-    results = [
-        document
-        for document in col.find({"completed": False}, {"completed": 0}).sort(
-            "time_due", 1
-        )
-    ]
+    results = [document for document in col.find({"completed": False}, {"completed": 0}).sort("time_due", 1)]
     return results
 
 
@@ -73,9 +69,7 @@ def delete_reminder(index):
         return False
 
     col = db["reminders"]
-    op = col.update_one(
-        {"_id": reminders[index - 1]["_id"]}, {"$set": {"completed": True}}
-    )
+    op = col.update_one({"_id": reminders[index - 1]["_id"]}, {"$set": {"completed": True}})
     return op.acknowledged == True
 
 
@@ -121,5 +115,4 @@ def timestamp_to_unix(timestamp):
 
 
 if __name__ == "__main__":
-    print(unix_to_timestamp(1609459200))
-    print(timestamp_to_unix("2021/1/1 00:00"))
+    pass

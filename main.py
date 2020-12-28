@@ -14,6 +14,7 @@ OWNER_ID = int(os.getenv("OWNER_ID"))
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 NAME_URL = "https://soinstant.ml"
 ICON_URL = "https://i.pinimg.com/originals/7d/41/f4/7d41f4a15bd89da6a65856e69cc6e2cc.png"
+EMBED_COLOR = 0xB7CAE2
 
 bot = commands.Bot(command_prefix="!", help_command=None)
 bot.timer_manager = timers.TimerManager(bot)
@@ -72,29 +73,24 @@ async def clearmsg(ctx, n=None):
 
 @bot.command(name="help", help="Shows this message.")
 async def help(ctx, *args):
-    current_level = dict([(_command.name, {"_help": _command.help, "_command": _command}) for _command in bot.commands])
+    current_level = {_command.name: {"_help": _command.help, "_command": _command} for _command in bot.commands}
     for arg in args:
         try:
             _command = current_level[arg]["_command"]
             if isinstance(_command, commands.Group):
-                current_level = dict(
-                    [
-                        (
-                            subcommand.name,
-                            {"_help": subcommand.help, "_command": subcommand},
-                        )
-                        for subcommand in _command.commands
-                    ]
-                )
+                current_level = {
+                    subcommand.name: {"_help": subcommand.help, "_command": subcommand}
+                    for subcommand in _command.commands
+                }
             else:
                 current_level = dict([(_command.name, {"_help": _command.help, "_command": _command})])
         except KeyError:
             await ctx.channel.send(content=f":negative_squared_cross_mark: No such command exists!")
 
     if not args:
-        embed = discord.Embed(title="Bot commands", color=0xB7CAE2)
+        embed = discord.Embed(title="Bot commands", color=EMBED_COLOR)
     else:
-        embed = discord.Embed(title="!" + " ".join(args), description=_command.help, color=0xB7CAE2)
+        embed = discord.Embed(title="!" + " ".join(args), description=_command.help, color=EMBED_COLOR)
 
     embed.set_author(name="Sir SoInstant", url=NAME_URL, icon_url=ICON_URL)
 
@@ -110,7 +106,7 @@ async def help(ctx, *args):
     name="reminders",
     aliases=["r"],
     invoke_without_command=True,
-    help="Base command for reminders",
+    help="Base command for reminders.",
 )
 async def reminders(ctx):
     await ctx.channel.send(content=":negative_squared_cross_mark: Invalid/missing subcommand!")
@@ -122,7 +118,7 @@ async def list_reminders(ctx):
     if reminders == []:
         await ctx.channel.send(content="You have no current tasks to complete! :tada:")
     else:
-        embed = discord.Embed(title="__Here are your pending tasks:__", color=discord.Color(0xB7CAE2))
+        embed = discord.Embed(title="__Here are your pending tasks:__", color=EMBED_COLOR)
         embed.set_author(
             name="Sir SoInstant",
             url=NAME_URL,
