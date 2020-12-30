@@ -65,6 +65,7 @@ version = "1.0.1"
 [package.dependencies]
 "discord.py" = ">=1.0.1"
 
+
 [[package]]
 category = "main"
 description = "Timers for bots made with discord.py"
@@ -222,7 +223,7 @@ idna = ">=2.0"
 multidict = ">=4.0"
 
 [metadata]
-content-hash = "d685d6a67da4d46084acb0e22125e1c76d726ba28e2d492df19d8d3ead5e98e1"
+content-hash = "36f88f1af8aaf44458f7191dba222b737f0322c2d257b57d88d68e85d15192c9"
 python-versions = "^3.8"
 
 [metadata.files]
