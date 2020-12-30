@@ -102,6 +102,11 @@ async def help(ctx, *args):
     await ctx.channel.send(embed=embed)
 
 
+@bot.command(name="skylea", help="Links the sky.shiiyu.moe website of the user.")
+async def skylea(ctx, username):
+    await ctx.channel.send(content=f"https://sky.shiiyu.moe/stats/{username}")
+
+
 @bot.group(
     name="reminders",
     aliases=["r"],
