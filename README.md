@@ -33,4 +33,6 @@ Note that the bot is written in the timezone of GMT+8. If you need to change the
 
 If you want to change the title URL, the icon, or the color of the embed, you can change the ```NAME_URL```, ```ICON_URL``` or ```EMBED_COLOR``` variables in ```main.py```. ```NAME_URL``` can be any link, ```ICON_URL``` must be a link to a picture, and ```EMBED_COLOR``` must be an [accepted color type](https://discordpy.readthedocs.io/en/latest/api.html?highlight=embed#discord.Embed.colour) by [discord.py](https://github.com/Rapptz/discord.py).
 
+The default prefix of the bot is '!'. Change it in ```main.py```.
+
 Lastly, enjoy!
