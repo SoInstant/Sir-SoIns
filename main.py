@@ -13,21 +13,24 @@ import utils
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
-CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+OUTPUT_CHANNEL_ID = int(os.getenv("OUTPUT_CHANNEL_ID"))
+REMINDERS_CHANNEL_ID = int(os.getenv("REMINDERS_CHANNEL_ID"))
 NAME_URL = "https://soinstant.ml"
 ICON_URL = "https://i.pinimg.com/originals/7d/41/f4/7d41f4a15bd89da6a65856e69cc6e2cc.png"
 EMBED_COLOR = 0xB7CAE2
+ONLINE_TIME = datetime.utcnow().timestamp()
 
 # Create Bot instance
 bot = commands.Bot(command_prefix="!", help_command=None)
 bot.timer_manager = timers.TimerManager(bot)
 
 # Logging
-logger = logging.getLogger('discord')
+logger = logging.getLogger("discord")
 logger.setLevel(logging.INFO)
-handler = logging.FileHandler(filename=f'./logs/discord-{datetime.utcnow().timestamp()}.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+handler = logging.FileHandler(filename=f"./logs/discord-{ONLINE_TIME}.log", encoding="utf-8", mode="w")
+handler.setFormatter(logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s"))
 logger.addHandler(handler)
+
 
 @bot.check
 async def block_dms(ctx):
@@ -43,7 +46,7 @@ async def block_all(ctx):
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over SoInstant"))
-    await bot.get_channel(CHANNEL_ID).send(content=f"<@{OWNER_ID}> Bot is now online!")
+    await bot.get_channel(OUTPUT_CHANNEL_ID).send(content=f"Bot is now online! Time: {ONLINE_TIME}")
     tasks = utils.get_reminders()
     for task in tasks:
         bot.timer_manager.create_timer(
@@ -55,7 +58,7 @@ async def on_ready():
 
 @bot.event
 async def on_reminder(task, time):
-    await bot.get_channel(CHANNEL_ID).send(f'<@{OWNER_ID}> The task "{task}" is due at {time}!')
+    await bot.get_channel(REMINDERS_CHANNEL_ID).send(f'<@{OWNER_ID}> The task "{task}" is due at {time}!')
 
 
 @bot.event
