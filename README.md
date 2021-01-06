@@ -3,7 +3,7 @@ A simple discord bot for keeping track of your tasks.
 Written in late Dec 2020.
 ## Dependencies
 ```python -m pip install -r requirements.txt```
-- [discord](https://pypi.org/project/discord.py/) (Discord API)
+- [discord.py](https://pypi.org/project/discord.py/) (Discord API)
 - [discord-timers](https://pypi.org/project/discord-timers/) (Scheduling reminders)
 - [python-dotenv](https://pypi.org/project/python-dotenv/) (Loading env variables)
 - [pymongo](https://pypi.org/project/pymongo/) (MongoDB API)
