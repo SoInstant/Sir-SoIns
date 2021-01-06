@@ -65,6 +65,13 @@ version = "1.0.1"
 [package.dependencies]
 "discord.py" = ">=1.0.1"
 
+[[package]]
+category = "main"
+description = "And nicer looking interactive help menu for discord.py"
+name = "discord-pretty-help"
+optional = false
+python-versions = ">=3.6,<4.0"
+version = "1.2.0"
 
 [[package]]
 category = "main"
@@ -261,6 +268,10 @@ click = [
 discord = [
     {file = "discord-1.0.1-py3-none-any.whl", hash = "sha256:9d4debb4a37845543bd4b92cb195bc53a302797333e768e70344222857ff1559"},
     {file = "discord-1.0.1.tar.gz", hash = "sha256:ff6653655e342e7721dfb3f10421345fd852c2a33f2cca912b1c39b3778a9429"},
+]
+discord-pretty-help = [
+    {file = "discord-pretty-help-1.2.0.tar.gz", hash = "sha256:b777ae066531af6a65134b10f602f46016654c9643da8235f26699d35cbc5e8d"},
+    {file = "discord_pretty_help-1.2.0-py3-none-any.whl", hash = "sha256:19959277567d485476af2d2df37d9c3bf9c40db9cebe9358d2298b27801a7429"},
 ]
 discord-timers = [
     {file = "discord-timers-0.1.0.tar.gz", hash = "sha256:034dd9ad7657a992dbaa98d6b29c5e389df5b727d24f46be817c95adf719f3f4"},
