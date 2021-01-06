@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import logging
 
 from discord.ext import commands, timers
 import discord
@@ -8,6 +9,7 @@ from dotenv import load_dotenv
 import keep_alive
 import utils
 
+# Env Variables
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID"))
@@ -16,9 +18,16 @@ NAME_URL = "https://soinstant.ml"
 ICON_URL = "https://i.pinimg.com/originals/7d/41/f4/7d41f4a15bd89da6a65856e69cc6e2cc.png"
 EMBED_COLOR = 0xB7CAE2
 
+# Create Bot instance
 bot = commands.Bot(command_prefix="!", help_command=None)
 bot.timer_manager = timers.TimerManager(bot)
 
+# Logging
+logger = logging.getLogger('discord')
+logger.setLevel(logging.INFO)
+handler = logging.FileHandler(filename=f'./logs/discord-{datetime.utcnow().timestamp()}.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 @bot.check
 async def block_dms(ctx):
