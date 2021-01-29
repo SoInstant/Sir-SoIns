@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 import logging
+from time import sleep
 
 from discord.ext import commands, timers
 import discord
@@ -21,7 +22,11 @@ EMBED_COLOR = 0xB7CAE2
 ONLINE_TIME = datetime.utcnow().timestamp()
 
 # Create Bot instance
-bot = commands.Bot(command_prefix="!", help_command=None)
+bot = commands.Bot(
+    command_prefix="!",
+    help_command=None,
+    status=discord.Activity(type=discord.ActivityType.watching, name="over SoInstant"),
+)
 bot.timer_manager = timers.TimerManager(bot)
 
 # Logging
@@ -45,7 +50,6 @@ async def block_all(ctx):
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over SoInstant"))
     await bot.get_channel(OUTPUT_CHANNEL_ID).send(content=f"Bot is now online! Time: {ONLINE_TIME}")
     tasks = utils.get_reminders()
     for task in tasks:
@@ -67,6 +71,8 @@ async def on_command_error(ctx, error):
         await ctx.channel.send(content=":negative_squared_cross_mark: No such command exists!")
     elif isinstance(error, commands.MissingRequiredArgument):
         await ctx.channel.send(content=":negative_squared_cross_mark: Missing parameters!")
+    else:
+        print(error)
 
 
 @bot.command(help="Clears n messages from the channel.")
@@ -77,6 +83,7 @@ async def clearmsg(ctx, n=None):
     async for message in ctx.channel.history(limit=n):
         counter += 1
         await message.delete()
+        sleep(0.5)
     if counter == 1:
         await ctx.channel.send(content=":white_check_mark: 1 message has been deleted!")
     else:
