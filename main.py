@@ -2,8 +2,9 @@ import os
 from datetime import datetime
 import logging
 from time import sleep
+import asyncio
 
-from discord.ext import commands, timers
+from discord.ext import commands, timers, tasks
 import discord
 from dotenv import load_dotenv
 
@@ -46,13 +47,21 @@ async def block_dms(ctx):
 async def block_all(ctx):
     return ctx.author.id == OWNER_ID
 
+@tasks.loop(minutes=1)
+async def water_break():
+    if datetime.utcnow().hour < 14 and datetime.now().minute % 15 == 0:
+        temp_msg = await bot.get_channel(REMINDERS_CHANNEL_ID).send(f"<@{OWNER_ID}> Water break! :droplet:")
+        await asyncio.sleep(200)
+        await temp_msg.delete()
+
 
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     await bot.get_channel(OUTPUT_CHANNEL_ID).send(content=f"Bot is now online! Time: {ONLINE_TIME}")
-    tasks = utils.get_reminders()
-    for task in tasks:
+    water_break.start()
+    pending_tasks = utils.get_reminders()
+    for task in pending_tasks:
         bot.timer_manager.create_timer(
             "reminder",
             task["time_warn"] - int(datetime.now().timestamp()),
@@ -61,8 +70,8 @@ async def on_ready():
 
 
 @bot.event
-async def on_reminder(task, time):
-    await bot.get_channel(REMINDERS_CHANNEL_ID).send(f'<@{OWNER_ID}> The task "{task}" is due at {time}!')
+async def on_reminder(task, time_due):
+    await bot.get_channel(REMINDERS_CHANNEL_ID).send(f'<@{OWNER_ID}> The task "{task}" is due at {time_due}!')
 
 
 @bot.event
@@ -154,7 +163,7 @@ async def list_reminders(ctx):
                 value=f"- {document['description']}",
                 inline=False,
             )
-        embed.set_footer(text="'You probably won't remember me' - You Meet in Paris")
+        embed.set_footer(text=utils.get_quote())
         await ctx.channel.send(embed=embed)
 
 
