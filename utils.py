@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timezone, timedelta
 
 import pymongo
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -113,6 +114,9 @@ def timestamp_to_unix(timestamp):
     dt = datetime.strptime(timestamp, "%Y/%m/%d %H:%M") - timedelta(hours=8)
     return int((dt - datetime(1970, 1, 1)).total_seconds())
 
+def get_quote():
+    data = requests.get("https://api.quotable.io/random").json()
+    return f'"{data["content"]}" - {data["author"]}'
 
 if __name__ == "__main__":
     pass
