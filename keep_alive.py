@@ -9,6 +9,11 @@ def main():
     return "The Bot is alive"
 
 
+@app.route("/bot")
+def bot_page():
+    return "Bot page"
+
+
 def run():
     app.run(host="0.0.0.0", port=8080)
 
