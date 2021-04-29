@@ -200,7 +200,7 @@ async def list_reminders(ctx):
         for i, document in enumerate(reminders):
             embed.add_field(
                 name=f"{i+1}. **{document['task']}** (Due on {utils.unix_to_timestamp(document['time_due'])})",
-                value="-\n".join(document["description"]),
+                value="\n-".join(document["description"]),
                 inline=False,
             )
         embed.set_footer(text=utils.get_quote())
