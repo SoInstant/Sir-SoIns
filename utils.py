@@ -43,7 +43,7 @@ def add_reminder(task, due, warn, desc):
         A boolean which indicates if the insert operation was successful.
     """
     col = db["reminders"]
-    desc = desc.replace("\n", "\n- ")
+    desc = desc.split("\n")
     op = col.insert_one(
         {
             "task": task,
@@ -114,9 +114,11 @@ def timestamp_to_unix(timestamp):
     dt = datetime.strptime(timestamp, "%Y/%m/%d %H:%M") - timedelta(hours=8)
     return int((dt - datetime(1970, 1, 1)).total_seconds())
 
+
 def get_quote():
     data = requests.get("https://api.quotable.io/random").json()
     return f'"{data["content"]}" - {data["author"]}'
+
 
 if __name__ == "__main__":
     pass
