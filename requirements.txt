@@ -3,6 +3,7 @@ python-dotenv
 flask
 pymongo
 dnspython
+requests
 discord-timers
 PyNaCl
 youtube-dl
