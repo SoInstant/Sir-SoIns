@@ -56,7 +56,9 @@ class YTDLSource(discord.PCMVolumeTransformer):
     @classmethod
     async def from_url(cls, url, *, loop=None, stream=False):
         loop = loop or asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
+        data = await loop.run_in_executor(
+            None, lambda: ytdl.extract_info(url, download=not stream)
+        )
 
         if "entries" in data:
             # take first item from a playlist
@@ -73,13 +75,6 @@ LOADING = "<a:typing:845909278463492126>"
 # Create Bot instance
 bot = commands.Bot(command_prefix="!", help_command=None)
 bot.timer_manager = timers.TimerManager(bot)
-
-# Logging
-logger = logging.getLogger("discord")
-logger.setLevel(logging.INFO)
-handler = logging.FileHandler(filename=f"./logs/{ONLINE_TIME}.log", encoding="utf-8", mode="w")
-handler.setFormatter(logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s"))
-logger.addHandler(handler)
 
 
 @bot.check
@@ -105,18 +100,26 @@ async def water_break():
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
-    await bot.get_channel(OUTPUT_CHANNEL_ID).send(content=f"Bot is now online! Time: {ONLINE_TIME}")
+    await bot.get_channel(OUTPUT_CHANNEL_ID).send(
+        content=f"Bot is now online! Time: {ONLINE_TIME}"
+    )
     water_break.start()
     pending_tasks = utils.get_reminders()
     for task in pending_tasks:
         bot.timer_manager.create_timer(
             "reminder",
             task["time_warn"] - int(datetime.now().timestamp()),
-            args=(task["task"], task["description"], utils.unix_to_timestamp(task["time_due"])),
+            args=(
+                task["task"],
+                task["description"],
+                utils.unix_to_timestamp(task["time_due"]),
+            ),
         )
     await bot.change_presence(
         activity=discord.Activity(
-            type=discord.ActivityType.watching, name="over SoInstant", start=datetime.utcnow()
+            type=discord.ActivityType.watching,
+            name="over SoInstant",
+            start=datetime.utcnow(),
         )
     )
 
@@ -136,9 +139,13 @@ async def on_reminder(task, description, time_due):
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.channel.send(content=":negative_squared_cross_mark: No such command exists!")
+        await ctx.channel.send(
+            content=":negative_squared_cross_mark: No such command exists!"
+        )
     elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.channel.send(content=":negative_squared_cross_mark: Missing parameters!")
+        await ctx.channel.send(
+            content=":negative_squared_cross_mark: Missing parameters!"
+        )
     elif isinstance(error, discord.errors.HTTPException):
         pass
     else:
@@ -147,7 +154,9 @@ async def on_command_error(ctx, error):
 
 @bot.command(help="Clears n messages from the channel.")
 async def clearmsg(ctx, n=None):
-    bot_message = await ctx.channel.send(content=f":hourglass: Deleting messages {LOADING}")
+    bot_message = await ctx.channel.send(
+        content=f":hourglass: Deleting messages {LOADING}"
+    )
     if n:
         n = int(n)
     counter = 0
@@ -161,13 +170,19 @@ async def clearmsg(ctx, n=None):
     if counter == 1:
         await bot_message.edit(content=f"{CHECKMARK} 1 message has been deleted!")
     else:
-        await bot_message.edit(content=f"{CHECKMARK} {counter} messages have been deleted!")
+        await bot_message.edit(
+            content=f"{CHECKMARK} {counter} messages have been deleted!"
+        )
 
 
 @bot.command(name="help", help="Shows this message.")
 async def help(ctx, *args):
     current_level = {
-        _command.name: {"_help": _command.help, "_command": _command, "aliases": _command.aliases}
+        _command.name: {
+            "_help": _command.help,
+            "_command": _command,
+            "aliases": _command.aliases,
+        }
         for _command in bot.commands
     }
     for arg in args:
@@ -196,7 +211,9 @@ async def help(ctx, *args):
                     ]
                 )
         except KeyError:
-            await ctx.channel.send(content=":negative_squared_cross_mark: No such command exists!")
+            await ctx.channel.send(
+                content=":negative_squared_cross_mark: No such command exists!"
+            )
 
     if not args:
         embed = discord.Embed(title="Bot commands", color=EMBED_COLOR)
@@ -225,7 +242,9 @@ async def help(ctx, *args):
 @bot.command(name="stats", help="Links the skyshiiyu and plancke pages of the user.")
 async def skylea(ctx, username="SoInstantPlayz"):
     await ctx.channel.send(content=f"https://sky.shiiyu.moe/stats/{username}")
-    await ctx.channel.send(content=f"https://plancke.io/hypixel/player/stats/{username}")
+    await ctx.channel.send(
+        content=f"https://plancke.io/hypixel/player/stats/{username}"
+    )
 
 
 @bot.command(name="restart", help="Restarts the application")
@@ -234,7 +253,9 @@ async def restart(ctx):
     os.execv(sys.executable, ["python"] + sys.argv)
 
 
-@bot.command(name="clearlogs", help="Clears the logs folder of any logs older than a week")
+@bot.command(
+    name="clearlogs", help="Clears the logs folder of any logs older than a week"
+)
 async def clearlogs(ctx):
     now = datetime.utcnow().timestamp()
     counter = 0
@@ -244,19 +265,27 @@ async def clearlogs(ctx):
         if now - float(filename) > 86400:
             os.remove(os.path.join("./logs", i))
             counter += 1
-    await bot_message.edit(content=f"{CHECKMARK} {counter} old log(s) have been deleted!")
+    await bot_message.edit(
+        content=f"{CHECKMARK} {counter} old log(s) have been deleted!"
+    )
 
 
-@bot.command(name="lofi", help="Joins a voice channel and plays the lofi stream by Chillhop")
+@bot.command(
+    name="lofi", help="Joins a voice channel and plays the lofi stream by Chillhop"
+)
 async def lofi(ctx):
     if not ctx.author.voice:
-        return await ctx.channel.send(content="You are not in a voice channel right now!")
+        return await ctx.channel.send(
+            content="You are not in a voice channel right now!"
+        )
     channel = ctx.author.voice.channel
     await channel.connect()
     async with ctx.typing():
         temp_msg = await ctx.channel.send(content=f"Loading stream {LOADING}")
         player = await YTDLSource.from_url(LOFI_URL, loop=bot.loop, stream=True)
-        ctx.voice_client.play(player, after=lambda e: print(f"Player error: {e}") if e else None)
+        ctx.voice_client.play(
+            player, after=lambda e: print(f"Player error: {e}") if e else None
+        )
 
     await temp_msg.edit(content=f"Now playing: {player.title}")
 
@@ -268,7 +297,9 @@ async def lofi(ctx):
     help="Base command for reminders.",
 )
 async def reminders(ctx):
-    await ctx.channel.send(content=":negative_squared_cross_mark: Invalid/missing subcommand!")
+    await ctx.channel.send(
+        content=":negative_squared_cross_mark: Invalid/missing subcommand!"
+    )
 
 
 @reminders.command(name="list", aliases=["l"], help="Lists all pending tasks.")
@@ -277,7 +308,9 @@ async def list_reminders(ctx):
     if reminders == []:
         await ctx.channel.send(content="You have no current tasks to complete! :tada:")
     else:
-        embed = discord.Embed(title="__Here are your pending tasks:__", color=EMBED_COLOR)
+        embed = discord.Embed(
+            title="__Here are your pending tasks:__", color=EMBED_COLOR
+        )
         embed.set_author(
             name="Sir SoInstant",
             url=NAME_URL,
@@ -314,15 +347,21 @@ async def add_reminder(ctx, task: str, due: str, warn: str, desc: str):
 )
 async def delete_reminder(ctx, n: int):
     if utils.delete_reminder(n):
-        await ctx.channel.send(content=f"{CHECKMARK} Reminder no. {n} has been deleted!")
+        await ctx.channel.send(
+            content=f"{CHECKMARK} Reminder no. {n} has been deleted!"
+        )
     else:
-        await ctx.channel.send(content=":negative_squared_cross_mark: Index out of bounds!")
+        await ctx.channel.send(
+            content=":negative_squared_cross_mark: Index out of bounds!"
+        )
 
 
 @reminders.command(name="cleardone", help="Clears all completed tasks from the DB.")
 async def clear(ctx):
     if utils.clear_finished():
-        await ctx.channel.send(content=f"{CHECKMARK} Successfully cleared completed tasks!")
+        await ctx.channel.send(
+            content=f"{CHECKMARK} Successfully cleared completed tasks!"
+        )
     else:
         await ctx.channel.send(content="Something went wrong!")
 
