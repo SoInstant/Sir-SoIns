@@ -284,10 +284,17 @@ async def clearlogs(ctx):
     )
 
 
-@bot.command(
-    name="lofi", help="Joins a voice channel and plays the lofi stream by Chillhop"
-)
+@bot.group(name="lofi", invoke_without_command=True, help="Base command for lofi.")
 async def lofi(ctx):
+    await ctx.channel.send(
+        content=":negative_squared_cross_mark: Invalid/missing subcommand!"
+    )
+
+
+@lofi.command(
+    name="start", help="Joins a voice channel and plays the lofi stream by Chillhop"
+)
+async def lofi_start(ctx):
     if not ctx.author.voice:
         return await ctx.channel.send(
             content="You are not in a voice channel right now!"
@@ -302,6 +309,11 @@ async def lofi(ctx):
         )
 
     await temp_msg.edit(content=f"Now playing: {player.title}")
+
+
+@lofi.command(name="stop", help="Stops the lofi player, if playing currently.")
+async def lofi_stop(ctx):
+    await ctx.voice_client.disconnect()
 
 
 @bot.group(
