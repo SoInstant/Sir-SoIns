@@ -6,4 +6,5 @@ dnspython
 requests
 discord-timers
 PyNaCl
+gunicorn
 youtube-dl
