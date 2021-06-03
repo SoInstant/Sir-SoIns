@@ -1,5 +1,6 @@
 from flask import Flask
 from threading import Thread
+from bot import keep_alive
 
 app = Flask("")
 
@@ -14,10 +15,5 @@ def bot_page():
     return "Bot page"
 
 
-def run():
-    app.run(host="0.0.0.0", port=8080)
-
-
-def keep_alive():
-    server = Thread(target=run)
-    server.start()
+keep_alive()
+app.run(host="0.0.0.0", port=8080)
