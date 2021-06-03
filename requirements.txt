@@ -1,6 +1,8 @@
-discord
-discord-timers
+discord.py
 python-dotenv
+flask
 pymongo
 dnspython
-flask
+discord-timers
+PyNaCl
+youtube-dl
