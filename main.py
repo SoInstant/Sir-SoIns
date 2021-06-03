@@ -8,6 +8,7 @@ from discord.ext import commands, timers, tasks
 import discord
 import youtube_dl
 from dotenv import load_dotenv
+from quart import Quart
 
 import utils
 
@@ -41,6 +42,10 @@ ffmpeg_options = {
 }
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
+# Emojis
+CHECKMARK = "<a:check:845921511252033587>"
+LOADING = "<a:typing:845909278463492126>"
+
 # Custom Classes
 class YTDLSource(discord.PCMVolumeTransformer):
     # This was taken from Rapptz/discord.py/examples/basic_voice.py
@@ -67,9 +72,19 @@ class YTDLSource(discord.PCMVolumeTransformer):
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 
-# Emojis
-CHECKMARK = "<a:check:845921511252033587>"
-LOADING = "<a:typing:845909278463492126>"
+# Create Web Server
+app = Quart(__name__)
+
+
+@app.route("/")
+async def main():
+    return "The Bot is alive"
+
+
+@app.route("/bot")
+async def bot_page():
+    return "Bot page"
+
 
 # Create Bot instance
 bot = commands.Bot(command_prefix="!", help_command=None)
@@ -365,11 +380,7 @@ async def clear(ctx):
         await ctx.channel.send(content="Something went wrong!")
 
 
-def run():
-    bot.run(TOKEN)
-    # dont put anything here, it will not be executed
-
-
-def keep_alive():
-    server = Thread(target=run)
-    server.start()
+PORT = os.environ.get("PORT")
+PORT = 8080
+bot.loop.create_task(app.run_task("0.0.0.0", PORT))
+bot.run(TOKEN)
