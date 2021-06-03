@@ -26,7 +26,10 @@ def get_reminders():
         A list of documents containing information about the tasks
     """
     col = db["reminders"]
-    results = [document for document in col.find({"completed": False}, {"completed": 0}).sort("time_due", 1)]
+    results = [
+        document
+        for document in col.find({"completed": False}, {"completed": 0}).sort("time_due", 1)
+    ]
     return results
 
 
