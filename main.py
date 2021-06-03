@@ -380,9 +380,6 @@ async def clear(ctx):
         await ctx.channel.send(content="Something went wrong!")
 
 
-# PORT = os.getenv("$PORT") if os.getenv("$PORT") else 8080
-print(os.getenv("PORT"))
-print(os.getenv("$PORT"))
-raise KeyboardInterrupt
-bot.loop.create_task(app.run_task("0.0.0.0", PORT))
+PORT = os.getenv("PORT")
+bot.loop.create_task(app.run_task(host="0.0.0.0", port=PORT))
 bot.run(TOKEN)
