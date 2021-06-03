@@ -1,15 +1,14 @@
 import os
 import sys
 from datetime import datetime
-import logging
 import asyncio
+from threading import Thread
 
 from discord.ext import commands, timers, tasks
 import discord
 import youtube_dl
 from dotenv import load_dotenv
 
-from app import keep_alive
 import utils
 
 # ENV Variables
@@ -366,7 +365,11 @@ async def clear(ctx):
         await ctx.channel.send(content="Something went wrong!")
 
 
-if __name__ == "__main__":
-    keep_alive()
+def run():
     bot.run(TOKEN)
     # dont put anything here, it will not be executed
+
+
+def keep_alive():
+    server = Thread(target=run)
+    server.start()
