@@ -1,10 +1,10 @@
 discord.py
 python-dotenv
-flask
+quart
 pymongo
 dnspython
 requests
 discord-timers
 PyNaCl
-gunicorn
+hypercorn
 youtube-dl
