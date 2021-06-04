@@ -150,20 +150,20 @@ async def on_reminder(task, description, time_due):
     )
 
 
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.channel.send(
-            content=":negative_squared_cross_mark: No such command exists!"
-        )
-    elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.channel.send(
-            content=":negative_squared_cross_mark: Missing parameters!"
-        )
-    elif isinstance(error, discord.errors.HTTPException):
-        pass
-    else:
-        print(error)
+# @bot.event
+# async def on_command_error(ctx, error):
+#     if isinstance(error, commands.CommandNotFound):
+#         await ctx.channel.send(
+#             content=":negative_squared_cross_mark: No such command exists!"
+#         )
+#     elif isinstance(error, commands.MissingRequiredArgument):
+#         await ctx.channel.send(
+#             content=":negative_squared_cross_mark: Missing parameters!"
+#         )
+#     elif isinstance(error, discord.errors.HTTPException):
+#         pass
+#     else:
+#         print(error)
 
 
 @bot.command(help="Clears n messages from the channel.")
