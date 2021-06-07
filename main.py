@@ -22,7 +22,7 @@ REMINDERS_CHANNEL_ID = int(os.getenv("REMINDERS_CHANNEL_ID"))
 # Parameters
 NAME_URL = "https://soinstant.ml"
 ICON_URL = "https://soinstant.ml/static/icon.png"
-LOFI_URL = "https://www.youtube.com/watch?v=7NOSDKb0HlU"
+LOFI_URL = "https://www.youtube.com/watch?v=VfW86fnQL5w"
 EMBED_COLOR = 0xB7CAE2
 ONLINE_TIME = datetime.utcnow().timestamp()
 ytdl_format_options = {
