@@ -78,7 +78,9 @@ async def on_ready():
 
 @bot.event
 async def on_reminder(task, description, time_due):
-    embed = discord.Embed(title=task, description=f"Due at: {time_due}")
+    embed = discord.Embed(
+        title=task, description=f"Due at: {time_due}", color=EMBED_COLOR
+    )
     embed.set_author(name="Sir SoInstant", url=NAME_URL, icon_url=ICON_URL)
     for n, subtask in enumerate(description):
         embed.add_field(name=f"Subtask {n + 1}", value=subtask, inline=False)
