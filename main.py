@@ -1,5 +1,4 @@
 import os
-import sys
 from datetime import datetime
 import asyncio
 
@@ -23,24 +22,11 @@ OWNER_ID = int(os.getenv("OWNER_ID"))
 OUTPUT_CHANNEL_ID = int(os.getenv("OUTPUT_CHANNEL_ID"))
 REMINDERS_CHANNEL_ID = int(os.getenv("REMINDERS_CHANNEL_ID"))
 
-# Create Web Server
-app = Quart(__name__)
-
-
-@app.route("/")
-async def main():
-    return "The Bot is alive"
-
-
-@app.route("/bot")
-async def bot_page():
-    return "Bot page"
-
 
 # Create Bot instance
 bot = commands.Bot(command_prefix="!")
 bot.timer_manager = timers.TimerManager(bot)
-bot.help_command = PrettyHelp()
+bot.help_command = PrettyHelp(color=EMBED_COLOR)
 
 
 @bot.check
@@ -116,6 +102,20 @@ async def on_command_error(ctx, error):
         pass
     else:
         print(error)
+
+
+# Create Web Server
+app = Quart(__name__)
+
+
+@app.route("/")
+async def main():
+    return "The Bot is alive"
+
+
+@app.route("/bot")
+async def bot_page():
+    return "Bot page"
 
 
 # Run Quart server to keep bot alive

@@ -49,7 +49,7 @@ class Miscellaneous(commands.Cog):
             content=f"https://plancke.io/hypixel/player/stats/{username}"
         )
 
-    @commands.command(name="restart", help="Restarts the application")
+    @commands.command(name="restart", help="Restarts the application.")
     async def restart(self, ctx):
         await ctx.channel.send(f":hourglass: Restarting bot {LOADING}")
         os.execv(sys.executable, ["python"] + sys.argv)

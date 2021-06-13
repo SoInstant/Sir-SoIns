@@ -8,3 +8,4 @@ discord-timers
 PyNaCl
 hypercorn
 youtube-dl
+discord-pretty-help
