@@ -14,6 +14,7 @@ from parameters import *
 from bot_cogs.reminders import Reminders
 from bot_cogs.stream import Stream
 from bot_cogs.misc import Miscellaneous
+from bot_cogs.stats import Stats
 
 # ENV Variables
 load_dotenv()
@@ -128,4 +129,5 @@ bot.loop.create_task(app.run_task(host="0.0.0.0", port=PORT))
 bot.add_cog(Reminders(bot))
 bot.add_cog(Stream(bot))
 bot.add_cog(Miscellaneous(bot))
+bot.add_cog(Stats(bot))
 bot.run(TOKEN)

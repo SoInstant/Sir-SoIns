@@ -4,7 +4,6 @@ import sys
 import asyncio
 from datetime import datetime
 
-import discord
 import discord.ext.commands as commands
 
 from parameters import CHECKMARK, LOADING
@@ -40,14 +39,14 @@ class Miscellaneous(commands.Cog):
                 content=f"{CHECKMARK} {counter} messages have been deleted!"
             )
 
-    @commands.command(
-        name="stats", help="Links the skyshiiyu and plancke pages of the user."
-    )
-    async def skylea(self, ctx, username="SoInstantPlayz"):
-        await ctx.channel.send(content=f"https://sky.shiiyu.moe/stats/{username}")
-        await ctx.channel.send(
-            content=f"https://plancke.io/hypixel/player/stats/{username}"
-        )
+    # @commands.command(
+    #     name="stats", help="Links the skyshiiyu and plancke pages of the user."
+    # )
+    # async def skylea(self, ctx, username="SoInstantPlayz"):
+    #     await ctx.channel.send(content=f"https://sky.shiiyu.moe/stats/{username}")
+    #     await ctx.channel.send(
+    #         content=f"https://plancke.io/hypixel/player/stats/{username}"
+    #     )
 
     @commands.command(name="restart", help="Restarts the application.")
     async def restart(self, ctx):

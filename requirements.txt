@@ -1,3 +1,4 @@
+asyncpixel
 discord.py
 python-dotenv
 quart
