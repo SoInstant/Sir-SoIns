@@ -14,6 +14,7 @@ from parameters import *
 from bot_cogs.reminders import Reminders
 from bot_cogs.stream import Stream
 from bot_cogs.misc import Miscellaneous
+from bot_cogs.checks import Checks
 
 # ENV Variables
 load_dotenv()
@@ -27,16 +28,6 @@ REMINDERS_CHANNEL_ID = int(os.getenv("REMINDERS_CHANNEL_ID"))
 bot = commands.Bot(command_prefix="!")
 bot.timer_manager = timers.TimerManager(bot)
 bot.help_command = PrettyHelp(color=EMBED_COLOR)
-
-
-@bot.check
-async def block_dms(ctx):
-    return ctx.guild != None
-
-
-@bot.check
-async def block_all(ctx):
-    return ctx.author.id == OWNER_ID
 
 
 @tasks.loop(minutes=1)
@@ -115,7 +106,7 @@ async def main():
     return "The Bot is alive"
 
 
-@app.route("/bot")
+@app.route("/", subdomain="bot")
 async def bot_page():
     return "Bot page"
 
@@ -128,4 +119,5 @@ bot.loop.create_task(app.run_task(host="0.0.0.0", port=PORT))
 bot.add_cog(Reminders(bot))
 bot.add_cog(Stream(bot))
 bot.add_cog(Miscellaneous(bot))
+bot.add_cog(Checks(bot))
 bot.run(TOKEN)
