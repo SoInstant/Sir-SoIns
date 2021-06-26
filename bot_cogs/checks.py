@@ -1,11 +1,10 @@
 import discord.ext.commands as commands
 
-from parameters import OWNER_ID
-
 
 class Checks(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot, owner_id):
         self.bot = bot
+        self.OWNER_ID = owner_id
 
     @commands.Cog.bot_check()
     async def block_dms(self, ctx):
@@ -13,4 +12,4 @@ class Checks(commands.Cog):
 
     @commands.Cog.bot_check()
     async def block_all(self, ctx):
-        return ctx.author.id == OWNER_ID
+        return ctx.author.id == self.OWNER_ID
