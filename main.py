@@ -108,6 +108,7 @@ async def on_command_error(ctx, error):
 
 # Create Web Server
 app = Quart(__name__)
+app.config["SERVER_NAME"] = "soinstant.ml"
 
 
 @app.route("/")
