@@ -113,7 +113,7 @@ app.config["SERVER_NAME"] = "soinstant.ml"
 
 @app.route("/")
 async def main():
-    return "The Bot is alive"
+    return "Home Page"
 
 
 @app.route("/", subdomain="bot")
