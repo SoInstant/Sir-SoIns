@@ -1,6 +1,6 @@
 # Sir-SoIns
 A simple discord bot for keeping track of your tasks.
-Written in late Dec 2020.
+Written in late Dec 2020, updated occasionally.
 
 ## Dependencies
 ```python -m pip install -r requirements.txt```
@@ -43,3 +43,8 @@ The default prefix of the bot is '!'. Change it in ```main.py```.
 To customise your bot, change the values in ```parameters.py```.
 
 Lastly, enjoy!
+
+## To-dos
+- Bot dashboard for a web GUI, using React and Material-ui
+- Revamp database schema to allow for the completion of individual subtasks
+- Advanced features on streaming yt videos (queue system, fancy embed to display info)
