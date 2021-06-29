@@ -36,7 +36,7 @@ def block_dms(ctx):
 
 @bot.check
 def block_all(ctx):
-    return ctx.author.id == 311707400342339585
+    return ctx.author.id == OWNER_ID
 
 
 @tasks.loop(minutes=1)
