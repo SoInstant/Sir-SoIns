@@ -5,7 +5,7 @@ from datetime import datetime
 
 # Bot Parameters
 NAME_URL = "https://soinstant.ml"
-ICON_URL = "https://soinstant.ml/static/icon.png"
+ICON_URL = "https://soinstant.ml/static/bot_icon.png"
 LOFI_URL = "https://www.youtube.com/watch?v=VfW86fnQL5w"
 EMBED_COLOR = 0xB7CAE2
 ONLINE_TIME = datetime.utcnow().timestamp()
