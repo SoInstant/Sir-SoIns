@@ -56,7 +56,7 @@ async def on_ready():
     await bot.get_channel(OUTPUT_CHANNEL_ID).send(
         content=f"Bot is now online! Time: {ONLINE_TIME}"
     )
-    water_break.start()
+    # water_break.start()
     pending_tasks = utils.get_reminders()
     for task in pending_tasks:
         bot.timer_manager.create_timer(
