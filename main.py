@@ -40,14 +40,14 @@ def block_all(ctx):
     return ctx.author.id == OWNER_ID
 
 
-# @tasks.loop(minutes=1)
-# async def water_break():
-#     if datetime.utcnow().hour < 14 and datetime.now().minute % 20 == 0:
-#         temp_msg = await bot.get_channel(REMINDERS_CHANNEL_ID).send(
-#             f"<@{OWNER_ID}> Water break! :droplet:"
-#         )
-#         await asyncio.sleep(200)
-#         await temp_msg.delete()
+@tasks.loop(minutes=1)
+async def water_break():
+    if datetime.utcnow().hour < 14 and datetime.now().minute % 20 == 0:
+        temp_msg = await bot.get_channel(REMINDERS_CHANNEL_ID).send(
+            f"<@{OWNER_ID}> Water break! :droplet:"
+        )
+        await asyncio.sleep(200)
+        await temp_msg.delete()
 
 
 @bot.event
