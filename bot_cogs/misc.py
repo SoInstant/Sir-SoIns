@@ -57,7 +57,7 @@ class Miscellaneous(commands.Cog):
         name="clearlogs", help="Clears the logs folder of any logs older than a week"
     )
     async def clearlogs(self, ctx):
-        now = datetime.utcnow().timestamp()
+        now = datetime.now().timestamp()
         counter = 0
         bot_message = await ctx.channel.send(
             content=f":hourglass: Deleting logs {LOADING}"
