@@ -6,9 +6,9 @@ from discord.ext import commands, timers, tasks
 import discord
 from dotenv import load_dotenv
 from pretty_help import PrettyHelp
-from quart import Quart
 
 import utils
+from app import app
 from parameters import *
 
 from bot_cogs.reminders import Reminders
@@ -42,12 +42,17 @@ def block_all(ctx):
 
 @tasks.loop(minutes=1)
 async def water_break():
-    if datetime.utcnow().hour < 14 and datetime.now().minute % 20 == 0:
+    if datetime.now().hour < 14 and datetime.now().minute % 20 == 0:
         temp_msg = await bot.get_channel(REMINDERS_CHANNEL_ID).send(
             f"<@{OWNER_ID}> Water break! :droplet:"
         )
         await asyncio.sleep(200)
         await temp_msg.delete()
+
+
+@tasks.loop(minutes=1)
+async def news_service():
+    os.environ["LAST_CHECKED"] = utils.check_news(int(os.environ["LAST_CHECKED"]))
 
 
 @bot.event
@@ -72,9 +77,10 @@ async def on_ready():
         activity=discord.Activity(
             type=discord.ActivityType.watching,
             name="over SoInstant",
-            start=datetime.utcnow(),
+            start=datetime.now(),
         )
     )
+    os.environ["LAST_CHECKED"] = str(ONLINE_TIME)
 
 
 @bot.event
@@ -105,21 +111,6 @@ async def on_command_error(ctx, error):
         pass
     else:
         print(error)
-
-
-# Create Web Server
-app = Quart(__name__)
-app.config["SERVER_NAME"] = "soinstant.ml"
-
-
-@app.route("/")
-async def main():
-    return "Home Page"
-
-
-@app.route("/", subdomain="bot")
-async def bot_page():
-    return "Bot page"
 
 
 # Run Quart server to keep bot alive
