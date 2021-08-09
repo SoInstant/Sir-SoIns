@@ -1,9 +1,14 @@
 import os
 from datetime import datetime, timezone, timedelta
+import time
 
 import pymongo
 import requests
 from dotenv import load_dotenv
+from feedparser import parse
+from bs4 import BeautifulSoup
+
+from parameters import RSS_LINKS
 
 load_dotenv()
 USERNAME = os.getenv("DB_USERNAME")
@@ -28,7 +33,9 @@ def get_reminders():
     col = db["reminders"]
     results = [
         document
-        for document in col.find({"completed": False}, {"completed": 0}).sort("time_due", 1)
+        for document in col.find({"completed": False}, {"completed": 0}).sort(
+            "time_due", 1
+        )
     ]
     return results
 
@@ -73,7 +80,9 @@ def delete_reminder(index):
         return False
 
     col = db["reminders"]
-    op = col.update_one({"_id": reminders[index - 1]["_id"]}, {"$set": {"completed": True}})
+    op = col.update_one(
+        {"_id": reminders[index - 1]["_id"]}, {"$set": {"completed": True}}
+    )
     return op.acknowledged == True
 
 
@@ -121,6 +130,85 @@ def timestamp_to_unix(timestamp):
 def get_quote():
     data = requests.get("https://api.quotable.io/random").json()
     return f'"{data["content"]}" - {data["author"]}'
+
+
+def check_news(timestamp: int) -> None:
+    """Fetches news from RSS feed(s) published after a certain time
+
+    Args:
+        timestamp (int): The timestamp to be checked
+
+    Returns:
+        An integer representing the timestamp that the feed(s) was last checked.
+    """
+    last_checked = int(datetime.now().timestamp())
+    WEBHOOK_URL = os.getenv("NEWS_WEBHOOK")
+
+    list_of_embeds = []  # Store embeds first
+
+    # Generate embeds
+    for news_source, links in RSS_LINKS.items():
+        for category, link in links.items():
+            feed = parse(link)
+
+            if feed.entries == []:
+                break
+
+            for entry in feed.entries:
+                if time.mktime(entry["published_parsed"]) + 28800 < timestamp:
+                    continue
+
+                embed_value = time.strftime(
+                    "%B %d, %Y %I:%M %p", entry["published_parsed"]
+                )
+
+                if "summary" in entry and entry["summary"] != "":
+                    embed_value = BeautifulSoup(
+                        entry["summary"], features="html.parser"
+                    ).get_text("\n")
+                if news_source == "st":
+                    embed_author = {
+                        "name": "The Straits Times",
+                        "url": "https://www.straitstimes.com",
+                        "icon_url": "https://soinstant.ml/static/st_icon.png",
+                    }
+                else:
+                    embed_author = {
+                        "name": "Channel NewsAsia",
+                        "url": "https://www.channelnewsasia.com",
+                        "icon_url": "https://soinstant.ml/static/cna_icon.png",
+                    }
+
+                list_of_embeds.append(
+                    {
+                        "author": embed_author,
+                        "title": entry["title"],
+                        "url": entry["link"],
+                        "color": 12045026,
+                        "fields": [
+                            {
+                                "name": "Summary",
+                                "value": embed_value,
+                                "inline": True,
+                            },
+                            {
+                                "name": "Category",
+                                "value": category,
+                                "inline": True,
+                            },
+                        ],
+                        "footer": {
+                            "text": "Written by SoInstant",
+                            "icon_url": "https://soinstant.ml/static/bot_icon.png",
+                        },
+                    }
+                )
+
+    for payload in [
+        list_of_embeds[i : i + 10] for i in range(0, len(list_of_embeds), 10)
+    ]:
+        requests.post(url=WEBHOOK_URL, json={"embeds": payload})
+    return last_checked
 
 
 if __name__ == "__main__":
