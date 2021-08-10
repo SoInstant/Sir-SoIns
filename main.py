@@ -14,7 +14,6 @@ from parameters import *
 from bot_cogs.reminders import Reminders
 from bot_cogs.stream import Stream
 from bot_cogs.misc import Miscellaneous
-from bot_cogs.rss import RSS
 
 # ENV Variables
 load_dotenv()
@@ -52,7 +51,7 @@ async def water_break():
 
 @tasks.loop(minutes=1)
 async def news_service():
-    os.environ["LAST_CHECKED"] = utils.check_news(int(os.environ["LAST_CHECKED"]))
+    bot.last_checked = utils.check_news(bot.last_checked)
 
 
 @bot.event
@@ -61,7 +60,6 @@ async def on_ready():
     await bot.get_channel(OUTPUT_CHANNEL_ID).send(
         content=f"Bot is now online! Time: {ONLINE_TIME}"
     )
-    # water_break.start()
     pending_tasks = utils.get_reminders()
     for task in pending_tasks:
         bot.timer_manager.create_timer(
@@ -80,7 +78,11 @@ async def on_ready():
             start=datetime.now(),
         )
     )
-    os.environ["LAST_CHECKED"] = str(ONLINE_TIME)
+    bot.last_checked = ONLINE_TIME
+
+    # Start tasks
+    water_break.start()
+    news_service.start()
 
 
 @bot.event
@@ -121,5 +123,4 @@ bot.loop.create_task(app.run_task(host="0.0.0.0", port=PORT))
 bot.add_cog(Reminders(bot))
 bot.add_cog(Stream(bot))
 bot.add_cog(Miscellaneous(bot))
-bot.add_cog(RSS(bot))
 bot.run(TOKEN)

@@ -139,7 +139,7 @@ def check_news(timestamp: int) -> None:
         timestamp (int): The timestamp to be checked
 
     Returns:
-        An integer representing the timestamp that the feed(s) was last checked.
+        An string representing the timestamp that the feed(s) was last checked.
     """
     last_checked = int(datetime.now().timestamp())
     WEBHOOK_URL = os.getenv("NEWS_WEBHOOK")
@@ -208,6 +208,9 @@ def check_news(timestamp: int) -> None:
         list_of_embeds[i : i + 10] for i in range(0, len(list_of_embeds), 10)
     ]:
         requests.post(url=WEBHOOK_URL, json={"embeds": payload})
+    print(
+        f"[ DEBUG ] Checked at {last_checked} | No. of messages sent: {len(list_of_embeds)}"
+    )
     return last_checked
 
 
