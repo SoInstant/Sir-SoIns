@@ -210,10 +210,10 @@ def check_news(timestamp: int) -> None:
     ]:
         requests.post(url=WEBHOOK_URL, json={"embeds": payload})
     print(
-        f"[ DEBUG ] Checked at {last_checked} | No. of messages sent: {len(list_of_embeds)}"
+        f"[ INFO ] Checked at {last_checked} | No. of messages sent: {len(list_of_embeds)}"
     )
     return last_checked
 
 
 if __name__ == "__main__":
-    check_news(1628611624)
+    pass

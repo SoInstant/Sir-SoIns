@@ -51,7 +51,6 @@ async def water_break():
 
 @tasks.loop(minutes=1)
 async def news_service():
-    print(bot.last_checked)
     bot.last_checked = utils.check_news(bot.last_checked)
 
 
