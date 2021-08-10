@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timezone, timedelta
 import time
+import calendar as cal
 
 import pymongo
 import requests
@@ -155,7 +156,7 @@ def check_news(timestamp: int) -> None:
                 break
 
             for entry in feed.entries:
-                if time.mktime(entry["published_parsed"]) + 28800 < timestamp:
+                if cal.timegm(entry["published_parsed"]) < timestamp:
                     continue
 
                 embed_value = time.strftime(
@@ -215,4 +216,4 @@ def check_news(timestamp: int) -> None:
 
 
 if __name__ == "__main__":
-    pass
+    check_news(1628611624)
