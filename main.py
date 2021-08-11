@@ -81,7 +81,7 @@ async def on_ready():
     bot.last_checked = ONLINE_TIME
 
     # Start tasks
-    water_break.start()
+    # water_break.start()
     news_service.start()
 
 
